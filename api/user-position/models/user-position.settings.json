@@ -1,0 +1,29 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_positions",
+  "info": {
+    "name": "UserPosition"
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "userId": {
+      "type": "string"
+    },
+    "lat": {
+      "type": "float"
+    },
+    "lng": {
+      "type": "float"
+    },
+    "last_seen": {
+      "type": "biginteger"
+    }
+  }
+}
