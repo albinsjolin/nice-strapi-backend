@@ -10,6 +10,22 @@
     },
     {
       "method": "GET",
+      "path": "/user-positions/:lat/:lng/:userId",
+      "handler": "user-position.findWithPos",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/user-positions/:lat/:lng/:userId/extended",
+      "handler": "user-position.findWithPosExtended",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
       "path": "/user-positions/count",
       "handler": "user-position.count",
       "config": {
