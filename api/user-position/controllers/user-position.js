@@ -26,7 +26,7 @@ function filterDistanceAndTime({
   const { lat: objectLat, lng: objectLng } = objectGeoPoint;
   const distance = geodist({ lat: userLat, lng: userLng }, { lat: objectLat, lng: objectLng });
 
-  return (Date.now() - last_seen) <= maxTime && distance <= maxDistance;
+  return ((Date.now() - last_seen) <= maxTime) && distance <= maxDistance;
 }
 
 module.exports = {
@@ -72,7 +72,8 @@ module.exports = {
                 lng: objectLng
               },
               userGeoPoint,
-              maxTime: 600_000_000,
+              maxTime: 600_000_000_000,
+              maxDistance: 5000,
             }))
           .sort((a, b) => compareGeoPoint(a, b, userGeoPoint))
       );
