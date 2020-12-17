@@ -15,18 +15,21 @@ function compareGeoPoint(a, b, userGeoPoint) {
   return aDistanceFromPerson > bDistanceFromPerson;
 }
 
-function filterDistanceAndTime({
-  last_seen,
+function filterDistance({
   userGeoPoint,
   objectGeoPoint,
   maxDistance,
-  maxTime,
+  calculateFromM
 }) {
   const { lat: userLat, lng: userLng } = userGeoPoint;
   const { lat: objectLat, lng: objectLng } = objectGeoPoint;
   const distance = geodist({ lat: userLat, lng: userLng }, { lat: objectLat, lng: objectLng });
 
-  return ((Date.now() - last_seen) <= maxTime) && distance <= maxDistance;
+  return (distance >= calculateFromM) && (distance <= maxDistance);
+}
+
+function filterTime({ last_seen, maxTime }) {
+  return ((Date.now() - last_seen) <= maxTime);
 }
 
 module.exports = {
@@ -37,21 +40,19 @@ module.exports = {
     return strapi
       .query('user-position')
       .find()
-      .then(res => res
-        .filter(({ userId: objectId }) => userId !== objectId)
-        .filter(({ last_seen, lat: objectLat, lng: objectLng }) =>
-          filterDistanceAndTime({
-            last_seen,
-            objectGeoPoint: {
-              lat: objectLat,
-              lng: objectLng
-            },
-            userGeoPoint,
-            maxDistance: 50,
-            maxTime: 600_000,
-          }))
-        .sort((a, b) => compareGeoPoint(a, b, userGeoPoint))
-      );
+      .then(res => {
+        const allArrWithoutUser = res.filter(({ userId: objectId }) => userId !== objectId);
+        const timeFilteredArr = allArrWithoutUser.filter(({ last_seen }) => filterTime({ last_seen, maxTime: 600_000 }));
+
+        return [
+          timeFilteredArr
+            .filter(({ lat, lng }) => filterDistance({ userGeoPoint, objectGeoPoint: { lat, lng }, maxDistance: 50, calculateFromM: 0 }))
+            .sort((a, b) => compareGeoPoint(a, b, userGeoPoint)),
+          timeFilteredArr
+            .filter(({ lat, lng }) => filterDistance({ userGeoPoint, objectGeoPoint: { lat, lng }, maxDistance: 150, calculateFromM: 50 })),
+          allArrWithoutUser,
+        ];
+      });
   },
 
   findWithPosExtended(ctx) {
@@ -61,21 +62,18 @@ module.exports = {
     return strapi
       .query('user-position')
       .find()
-      .then(
-        res => res
-          .filter(({ userId: objectId }) => userId !== objectId)
-          .filter(({ last_seen, lat: objectLat, lng: objectLng }) =>
-            filterDistanceAndTime({
-              last_seen,
-              objectGeoPoint: {
-                lat: objectLat,
-                lng: objectLng
-              },
-              userGeoPoint,
-              maxTime: 600_000_000_000,
-              maxDistance: 5000,
-            }))
-          .sort((a, b) => compareGeoPoint(a, b, userGeoPoint))
-      );
+      .then(res => {
+        const allArrWithoutUser = res.filter(({ userId: objectId }) => userId !== objectId);
+        const timeFilteredArr = allArrWithoutUser.filter(({ last_seen }) => filterTime({ last_seen, maxDistance: 600_000_000 }));
+
+        return [
+          timeFilteredArr
+            .filter(({ lat, lng }) => filterDistance({ userGeoPoint, objectGeoPoint: { lat, lng }, maxDistance: 5000, calculateFromM: 0 }))
+            .sort((a, b) => compareGeoPoint(a, b, userGeoPoint)),
+          timeFilteredArr
+            .filter(({ lat, lng }) => filterDistance({ userGeoPoint, objectGeoPoint: { lat, lng }, maxDistance: 50000, calculateFromM: 5000 })),
+          allArrWithoutUser,
+        ];
+      });
   },
 };
