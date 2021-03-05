@@ -157,4 +157,19 @@ module.exports = {
         ];
       });
   },
+
+  getUserContactsHashtags(ctx) {
+    const { ids } = ctx.params;
+    console.log("-------------------------------------------------");
+    console.log(ids.split(","));
+    return strapi
+      .query("user-position")
+      .find()
+      .then((res) => {
+        const allArrWithoutUser = res.filter(({ userId }) =>
+          ids.includes(userId)
+        );
+        console.log(allArrWithoutUser);
+      });
+  },
 };
