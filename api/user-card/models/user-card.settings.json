@@ -1,9 +1,8 @@
 {
   "kind": "collectionType",
-  "collectionName": "user_positions",
+  "collectionName": "user_cards",
   "info": {
-    "name": "UserPosition",
-    "description": ""
+    "name": "UserCard"
   },
   "options": {
     "increments": true,
@@ -11,26 +10,26 @@
     "draftAndPublish": true
   },
   "attributes": {
-    "name": {
+    "Name": {
       "type": "string"
     },
     "userId": {
       "type": "string"
     },
-    "lat": {
-      "type": "float"
+    "title": {
+      "type": "string"
     },
-    "lng": {
-      "type": "float"
-    },
-    "last_seen": {
-      "type": "biginteger"
-    },
-    "hashtags": {
-      "type": "json"
+    "subtitle": {
+      "type": "string"
     },
     "bio": {
       "type": "text"
+    },
+    "p_url": {
+      "type": "string"
+    },
+    "KeyWords": {
+      "type": "json"
     }
   }
 }

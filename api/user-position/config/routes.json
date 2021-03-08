@@ -34,7 +34,7 @@
     },
     {
       "method": "GET",
-      "path": "/user-positions/:ids",
+      "path": "/user-positions/contacts/:ids",
       "handler": "user-position.getUserContactsHashtags",
       "config": {
         "policies": []
