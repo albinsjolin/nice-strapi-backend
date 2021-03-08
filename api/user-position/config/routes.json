@@ -33,14 +33,6 @@
       }
     },
     {
-      "method": "GET",
-      "path": "/user-positions/contacts/:ids",
-      "handler": "user-position.getUserContactsHashtags",
-      "config": {
-        "policies": []
-      }
-    },
-    {
       "method": "POST",
       "path": "/user-positions",
       "handler": "user-position.create",
