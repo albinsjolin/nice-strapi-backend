@@ -11,9 +11,6 @@
     "draftAndPublish": true
   },
   "attributes": {
-    "name": {
-      "type": "string"
-    },
     "userId": {
       "type": "string"
     },
@@ -25,12 +22,6 @@
     },
     "last_seen": {
       "type": "biginteger"
-    },
-    "hashtags": {
-      "type": "json"
-    },
-    "bio": {
-      "type": "text"
     }
   }
 }
