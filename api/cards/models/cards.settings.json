@@ -1,8 +1,8 @@
 {
   "kind": "collectionType",
-  "collectionName": "user_cards",
+  "collectionName": "cards",
   "info": {
-    "name": "UserCard"
+    "name": "cards"
   },
   "options": {
     "increments": true,
@@ -10,25 +10,24 @@
     "draftAndPublish": true
   },
   "attributes": {
-    "Name": {
-      "type": "string"
-    },
     "userId": {
-      "type": "string"
+      "type": "string",
+      "required": true,
+      "unique": true
     },
-    "title": {
-      "type": "string"
-    },
-    "subtitle": {
+    "name": {
       "type": "string"
     },
     "bio": {
       "type": "text"
     },
-    "p_url": {
+    "title": {
       "type": "string"
     },
-    "KeyWords": {
+    "keywords": {
+      "type": "json"
+    },
+    "hashtags": {
       "type": "json"
     }
   }

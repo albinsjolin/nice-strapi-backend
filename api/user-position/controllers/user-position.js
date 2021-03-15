@@ -61,15 +61,21 @@ function filterTime({ last_seen, maxTime }) {
 }
 
 function getHashtags(users, userId) {
-  console.log(
-    JSON.parse(
-      users.filter(({ userId: objectId }) => userId === objectId)[0].hashtags
-    )
-  );
   return JSON.parse(
     users.filter(({ userId: objectId }) => userId === objectId)[0].hashtags
   );
 }
+
+const getUsers = (users) => {
+  return strapi
+    .query("cards")
+    .find()
+    .then((res) =>
+      users.map(({ userId: neaybyUserId }) => {
+        return res.find(({ userId }) => userId === neaybyUserId);
+      })
+    );
+};
 
 module.exports = {
   findWithPos(ctx) {
@@ -78,7 +84,7 @@ module.exports = {
     return strapi
       .query("user-position")
       .find()
-      .then((res) => {
+      .then(async (res) => {
         const allArrWithoutUser = res
           .filter(({ userId: objectId }) => userId !== objectId)
           .map((obj) => {
@@ -87,8 +93,41 @@ module.exports = {
               farFromUser: getFarStringFromGeoPoint(lat, lng, obj.lat, obj.lng),
             };
           });
-        const timeFilteredArr = allArrWithoutUser.filter(({ last_seen }) =>
+
+        let usersInfo = await getUsers(allArrWithoutUser);
+
+        usersInfo = usersInfo.map((obj) => {
+          const foundUser = allArrWithoutUser.find(
+            ({ userId }) => userId === obj.userId
+          );
+          delete obj.updated_by;
+          delete obj.created_by;
+
+          return {
+            ...obj,
+            last_seen: foundUser.last_seen,
+            lat: foundUser.lat,
+            lng: foundUser.lng,
+          };
+        });
+        const timeFilteredArr = usersInfo.filter(({ last_seen }) =>
           filterTime({ last_seen, maxTime: 600_000 })
+        );
+        console.log(
+          timeFilteredArr
+            .filter(({ lat, lng }) =>
+              filterDistance({
+                userGeoPoint,
+                objectGeoPoint: { lat, lng },
+                maxDistance: 50,
+                calculateFromM: 0,
+              })
+            )
+            .sort(
+              (a, b) =>
+                compareHashtags(a, b, getHashtags(res, userId)) ||
+                compareGeoPoint(a, b, userGeoPoint)
+            )
         );
 
         return [
@@ -114,7 +153,7 @@ module.exports = {
               calculateFromM: 50,
             })
           ),
-          allArrWithoutUser,
+          usersInfo,
         ];
       });
   },
