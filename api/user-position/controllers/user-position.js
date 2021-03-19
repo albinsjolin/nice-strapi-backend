@@ -106,6 +106,7 @@ module.exports = {
           return {
             ...obj,
             last_seen: foundUser.last_seen,
+            farFromuser: foundUser.farFromUser,
             lat: foundUser.lat,
             lng: foundUser.lng,
           };
