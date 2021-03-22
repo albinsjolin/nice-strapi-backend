@@ -19,7 +19,8 @@ const compareHashtags = (a, b, hashtags) =>
   countEquals(hashtags, a.hashtags) - countEquals(hashtags, b.hashtags);
 
 const countEquals = (hashtags, incommingHashtags) =>
-  hashtags.filter((hashtag) => incommingHashtags.includes(hashtag)).length;
+  hashtags ||
+  [].filter((hashtag) => incommingHashtags.includes(hashtag)).length;
 
 function getFarStringFromGeoPoint(usrLat, usrLng, objLat, objLng) {
   const distance = geodist(
