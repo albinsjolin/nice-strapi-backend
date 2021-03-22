@@ -106,28 +106,13 @@ module.exports = {
           return {
             ...obj,
             last_seen: foundUser.last_seen,
+            farFromuser: foundUser.farFromUser,
             lat: foundUser.lat,
             lng: foundUser.lng,
           };
         });
         const timeFilteredArr = usersInfo.filter(({ last_seen }) =>
           filterTime({ last_seen, maxTime: 600_000 })
-        );
-        console.log(
-          timeFilteredArr
-            .filter(({ lat, lng }) =>
-              filterDistance({
-                userGeoPoint,
-                objectGeoPoint: { lat, lng },
-                maxDistance: 50,
-                calculateFromM: 0,
-              })
-            )
-            .sort(
-              (a, b) =>
-                compareHashtags(a, b, getHashtags(res, userId)) ||
-                compareGeoPoint(a, b, userGeoPoint)
-            )
         );
 
         return [
